@@ -1,0 +1,34 @@
+plugins {
+  id 'java'
+  id 'edu.wpi.first.GradleRIO' version '2026.2.1'
+}
+
+def ROBOT_MAIN_CLASS = 'frc.robot.Main'
+java { toolchain { languageVersion = JavaLanguageVersion.of(17) } }
+
+deploy {
+  targets {
+    roborio(getTargetTypeClass('RoboRIO')) {
+      team = project.frc.getTeamNumber()
+      debug = project.frc.getDebugOrDefault(false)
+      artifacts {
+        frcJava(getArtifactTypeClass('FRCJavaArtifact')) {
+          jvmArgs = ['-XX:+UseSerialGC']
+        }
+      }
+    }
+  }
+}
+
+wpi { }
+
+dependencies {
+  implementation wpi.java.deps.wpilib()
+  implementation wpi.java.vendor.java()
+  roborioDebug wpi.java.deps.wpilibJniDebug(wpi.platforms.roborio)
+  roborioRelease wpi.java.deps.wpilibJniRelease(wpi.platforms.roborio)
+  nativeDebug wpi.java.deps.wpilibJniDebug(wpi.platforms.desktop)
+  nativeRelease wpi.java.deps.wpilibJniRelease(wpi.platforms.desktop)
+  simulationDebug wpi.sim.enableDebug()
+  simulationRelease wpi.sim.enableRelease()
+}
